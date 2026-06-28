@@ -1,0 +1,8 @@
+/uploads/*
+!/uploads/.gitkeep
+
+.vscode/
+.git/
+
+Thumbs.db
+.DS_Store
