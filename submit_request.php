@@ -28,7 +28,7 @@ if(isset($_POST['submit_request'])){
         $estimated_cost = $pages * $copies * 1;
     }
 
-    $filename = $_FILES['document']['name'];
+   $filename = $_FILES['document']['name'];
 $tempname = $_FILES['document']['tmp_name'];
 
 $new_filename = time() . "_" . $filename;
@@ -40,10 +40,18 @@ if (!is_dir($upload_dir)) {
 }
 
 $file_path = $upload_dir . $new_filename;
-$file_path = "uploads/" . $new_filename;
-
 
 if (move_uploaded_file($tempname, $file_path)) {
+
+    echo "UPLOAD SUCCESS";
+    exit;
+
+} else {
+
+    echo "UPLOAD FAILED";
+    exit;
+}
+
 
         $queue_query = mysqli_query(
             $conn,
