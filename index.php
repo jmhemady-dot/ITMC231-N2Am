@@ -1,3 +1,3 @@
 <?php
-echo "<h1>ADNU-PRINTS is Working!</h1>";
-?>
+header("Location: login.php");
+exit();
