@@ -29,12 +29,21 @@ if(isset($_POST['submit_request'])){
     }
 
     $filename = $_FILES['document']['name'];
-    $tempname = $_FILES['document']['tmp_name'];
+$tempname = $_FILES['document']['tmp_name'];
 
-    $new_filename = time() . "_" . $filename;
-    $target = "uploads/" . $new_filename;
+$new_filename = time() . "_" . $filename;
 
-    if(move_uploaded_file($tempname, $target)){
+$upload_dir = __DIR__ . "/uploads/";
+
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
+$file_path = $upload_dir . $new_filename;
+$file_path = "uploads/" . $new_filename;
+
+
+if (move_uploaded_file($tempname, $file_path)) {
 
         $queue_query = mysqli_query(
             $conn,
@@ -63,7 +72,7 @@ if(isset($_POST['submit_request'])){
         (
             '$user_id',
             '$filename',
-            '$target',
+            '$file_path',
             '$copies',
             '$paper_size',
             '$color_mode',
