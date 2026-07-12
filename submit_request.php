@@ -43,64 +43,69 @@ $file_path = $upload_dir . $new_filename;
 
 if (move_uploaded_file($tempname, $file_path)) {
 
-    echo "UPLOAD SUCCESS";
-    exit;
+    $queue_query = mysqli_query(
+        $conn,
+        "SELECT MAX(queue_number) AS last_queue FROM print_requests"
+    );
 
-} else {
+    if(!$queue_query){
+        die("QUEUE ERROR: " . mysqli_error($conn));
+    }
 
-    echo "UPLOAD FAILED";
-    exit;
+    $queue_data = mysqli_fetch_assoc($queue_query);
+
+    $queue_number = ($queue_data['last_queue'] ?? 0) + 1;
+
+    $sql = "INSERT INTO print_requests
+    (
+        user_id,
+        filename,
+        file_path,
+        copies,
+        paper_size,
+        color_mode,
+        pages,
+        print_type,
+        orientation,
+        queue_number,
+        estimated_cost
+    )
+    VALUES
+    (
+        '$user_id',
+        '$filename',
+        '$file_path',
+        '$copies',
+        '$paper_size',
+        '$color_mode',
+        '$pages',
+        '$print_type',
+        '$orientation',
+        '$queue_number',
+        '$estimated_cost'
+    )";
+
+    if(mysqli_query($conn, $sql)){
+
+        $message = "
+        <div class='alert alert-success'>
+        Request Submitted Successfully!<br>
+        Queue Number: <strong>$queue_number</strong><br>
+        Estimated Cost: <strong>₱$estimated_cost</strong>
+        </div>";
+
+    }else{
+
+        die("INSERT ERROR: " . mysqli_error($conn));
+
+    }
+
+}else{
+
+    die("UPLOAD ERROR");
+
 }
 
-
-        $queue_query = mysqli_query(
-            $conn,
-            "SELECT MAX(queue_number) AS last_queue FROM print_requests"
-        );
-
-        $queue_data = mysqli_fetch_assoc($queue_query);
-
-        $queue_number = ($queue_data['last_queue'] ?? 0) + 1;
-
-        $sql = "INSERT INTO print_requests
-        (
-            user_id,
-            filename,
-            file_path,
-            copies,
-            paper_size,
-            color_mode,
-            pages,
-            print_type,
-            orientation,
-            queue_number,
-            estimated_cost
-        )
-        VALUES
-        (
-            '$user_id',
-            '$filename',
-            '$file_path',
-            '$copies',
-            '$paper_size',
-            '$color_mode',
-            '$pages',
-            '$print_type',
-            '$orientation',
-            '$queue_number',
-            '$estimated_cost'
-        )";
-
-        if(mysqli_query($conn, $sql)){
-
-            $message = "
-            <div class='alert alert-success'>
-                Request Submitted Successfully!<br>
-                Queue Number: <strong>$queue_number</strong><br>
-                Estimated Cost: <strong>₱$estimated_cost</strong>
-            </div>";
-        }
-    }
 }
 ?>
 
