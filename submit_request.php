@@ -102,7 +102,15 @@ if (move_uploaded_file($tempname, $file_path)) {
 
 }else{
 
-    die("UPLOAD ERROR");
+    echo "<pre>";
+echo "Temp Name: " . $tempname . "<br>";
+echo "Destination: " . $file_path . "<br>";
+echo "Upload Error Code: " . $_FILES['document']['error'] . "<br>";
+echo "Uploads folder exists: " . (is_dir($upload_dir) ? "YES" : "NO") . "<br>";
+echo "Uploads folder writable: " . (is_writable($upload_dir) ? "YES" : "NO") . "<br>";
+var_dump($_FILES);
+exit();
+
 
 }
 
